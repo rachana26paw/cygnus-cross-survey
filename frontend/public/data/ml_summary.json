@@ -1,0 +1,143 @@
+{
+  "random_state": 42,
+  "features": [
+    "period",
+    "prim_width_pf"
+  ],
+  "tess_total_complete": 4046,
+  "tess_train_rows": 3236,
+  "tess_test_rows": 810,
+  "gaia_rows": 489,
+  "tess_train_label_dist": {
+    "0": 1479,
+    "1": 1757
+  },
+  "tess_test_label_dist": {
+    "0": 406,
+    "1": 404
+  },
+  "gaia_label_dist": {
+    "0": 363,
+    "1": 126
+  },
+  "tess_accuracy": 0.9247,
+  "tess_precision": 0.9254,
+  "tess_recall": 0.9247,
+  "tess_f1_weighted": 0.9247,
+  "tess_confusion_matrix": [
+    [
+      367,
+      39
+    ],
+    [
+      22,
+      382
+    ]
+  ],
+  "gaia_proxy_accuracy": 0.3252,
+  "gaia_proxy_precision": 0.654,
+  "gaia_proxy_recall": 0.3252,
+  "gaia_proxy_f1": 0.2644,
+  "gaia_confusion_matrix": [
+    [
+      45,
+      318
+    ],
+    [
+      12,
+      114
+    ]
+  ],
+  "tess_mean_confidence": 0.9408,
+  "tess_median_confidence": 0.9946,
+  "gaia_mean_confidence": 0.8603,
+  "gaia_median_confidence": 0.8721,
+  "feature_importances": {
+    "period": 0.3314,
+    "prim_width_pf": 0.6686
+  },
+  "calibration_tess": [
+    {
+      "bin": "0.50-0.59",
+      "lo": 0.5,
+      "hi": 0.6,
+      "n": 19,
+      "n_correct": 11,
+      "accuracy": 0.5789
+    },
+    {
+      "bin": "0.60-0.69",
+      "lo": 0.6,
+      "hi": 0.7,
+      "n": 25,
+      "n_correct": 18,
+      "accuracy": 0.72
+    },
+    {
+      "bin": "0.70-0.79",
+      "lo": 0.7,
+      "hi": 0.8,
+      "n": 52,
+      "n_correct": 35,
+      "accuracy": 0.6731
+    },
+    {
+      "bin": "0.80-0.89",
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 61,
+      "n_correct": 54,
+      "accuracy": 0.8852
+    },
+    {
+      "bin": "0.90-1.00",
+      "lo": 0.9,
+      "hi": 1.001,
+      "n": 653,
+      "n_correct": 631,
+      "accuracy": 0.9663
+    }
+  ],
+  "calibration_gaia": [
+    {
+      "bin": "0.50-0.59",
+      "lo": 0.5,
+      "hi": 0.6,
+      "n": 18,
+      "n_correct": 9,
+      "accuracy": 0.5
+    },
+    {
+      "bin": "0.60-0.69",
+      "lo": 0.6,
+      "hi": 0.7,
+      "n": 18,
+      "n_correct": 4,
+      "accuracy": 0.2222
+    },
+    {
+      "bin": "0.70-0.79",
+      "lo": 0.7,
+      "hi": 0.8,
+      "n": 166,
+      "n_correct": 17,
+      "accuracy": 0.1024
+    },
+    {
+      "bin": "0.80-0.89",
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 51,
+      "n_correct": 14,
+      "accuracy": 0.2745
+    },
+    {
+      "bin": "0.90-1.00",
+      "lo": 0.9,
+      "hi": 1.001,
+      "n": 236,
+      "n_correct": 115,
+      "accuracy": 0.4873
+    }
+  ]
+}

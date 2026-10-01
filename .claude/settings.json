@@ -1,0 +1,34 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-scientific-results.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/frontend-validation.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/validate-website-data.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-python-syntax.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

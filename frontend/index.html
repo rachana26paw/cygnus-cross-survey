@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYGNUS — Can We Trust ML Confidence Across Surveys?</title>
+  <meta name="description" content="A research project investigating whether machine-learning confidence remains reliable when a model trained on NASA TESS data is applied to ESA Gaia DR3 eclipsing binary stars." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Site navigation">
+    <span class="nav-brand">CYGNUS</span>
+    <ul class="nav-links" role="list">
+      <li><a href="#question"   class="nav-link" data-section="question">Question</a></li>
+      <li><a href="#stars"      class="nav-link" data-section="stars">The Stars</a></li>
+      <li><a href="#experiment" class="nav-link" data-section="experiment">Experiment</a></li>
+      <li><a href="#result"     class="nav-link" data-section="result">Result</a></li>
+      <li><a href="#finding"    class="nav-link" data-section="finding">Finding</a></li>
+    </ul>
+    <div class="nav-progress-wrap" aria-hidden="true">
+      <div class="nav-progress-bar" id="js-progress-bar"></div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ════════════════════════════════════════════════
+         HERO
+         ════════════════════════════════════════════════ -->
+    <section class="section s-hero" id="hero" aria-label="Introduction">
+      <canvas id="js-starfield" class="starfield-canvas" aria-hidden="true"></canvas>
+      <div class="hero-inner">
+        <div class="hero-label" id="js-hero-label">CYGNUS · 2026</div>
+        <h1 class="hero-title" id="js-hero-title">
+          Can We Trust<br>ML Confidence<br>Across Surveys?
+        </h1>
+        <p class="hero-sub" id="js-hero-sub">
+          A model trained on one telescope's data.<br>
+          Applied to another telescope's stars.<br>
+          Does its confidence still mean anything?
+        </p>
+        <a href="#question" class="hero-cue" id="js-hero-cue" aria-label="Begin reading">
+          <span>Begin</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 1 — THE QUESTION
+         ════════════════════════════════════════════════ -->
+    <section class="section s-question" id="question" aria-labelledby="question-h">
+      <div class="container">
+        <div class="ch-label">Chapter 1</div>
+        <h2 class="ch-heading" id="question-h">A model can be confident<br>and still be wrong.</h2>
+
+        <div class="question-layout">
+          <div class="question-prose reveal">
+            <p>Machine-learning models give a confidence score alongside every prediction — like saying it is 90% sure of its answer.</p>
+            <p>When the model says 90% confident, it should be right about 90% of the time. That is what well-calibrated confidence means.</p>
+            <p>But what happens when the same model is given data from a completely different telescope? Does the confidence score still mean anything?</p>
+          </div>
+          <div class="question-rq reveal">
+            <div class="rq-chip">Research Question</div>
+            <blockquote class="rq-text">
+              "Can we trust the confidence score given by an ML model when it classifies variable stars from a <em>different</em> astronomical survey?"
+            </blockquote>
+            <p class="rq-note">This project tests that question using NASA TESS and ESA Gaia DR3.</p>
+          </div>
+        </div>
+
+        <!-- Confidence preview — simple visual -->
+        <div class="conf-preview reveal" aria-label="Confidence calibration preview">
+          <div class="cp-item cp-good">
+            <div class="cp-label">Ideal</div>
+            <div class="cp-scenario">
+              <span class="cp-num">90%</span>
+              <span class="cp-arrow">→</span>
+              <span class="cp-result cp-result-good">~90% correct</span>
+            </div>
+            <div class="cp-desc">Confidence ≈ correctness</div>
+          </div>
+          <div class="cp-divider" aria-hidden="true">vs</div>
+          <div class="cp-item cp-bad">
+            <div class="cp-label">What we found</div>
+            <div class="cp-scenario">
+              <span class="cp-num">90%</span>
+              <span class="cp-arrow">→</span>
+              <span class="cp-result cp-result-bad">~49% agreement</span>
+            </div>
+            <div class="cp-desc">Confidence ≠ correctness</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 2 — THE STARS
+         ════════════════════════════════════════════════ -->
+    <section class="section s-stars" id="stars" aria-labelledby="stars-h">
+      <div class="container">
+        <div class="ch-label">Chapter 2</div>
+        <h2 class="ch-heading" id="stars-h">Eclipsing binary stars.</h2>
+        <p class="ch-intro reveal">This project studies a particular kind of star system: eclipsing binaries. Before anything else, you need to know what they are.</p>
+
+        <div class="binary-layout">
+
+          <!-- Orbital animation + light curve -->
+          <div class="binary-visual reveal">
+            <div class="binary-canvas-wrap" role="img" aria-label="Animation showing two stars orbiting each other edge-on. As one star passes in front of the other, the observed brightness drops, shown in the light curve below.">
+              <canvas id="js-binary-orbital" class="binary-canvas" width="500" height="180" aria-hidden="true"></canvas>
+              <canvas id="js-binary-lc"      class="lc-canvas"     width="500" height="130" aria-hidden="true"></canvas>
+            </div>
+            <p class="binary-caption">Two stars orbiting each other, viewed edge-on. Watch the brightness curve below.</p>
+          </div>
+
+          <!-- Explanation -->
+          <div class="binary-prose reveal">
+            <p>Two stars orbit each other. If the orbital plane is roughly aligned with our line of sight, one star can pass in front of the other — as seen from Earth.</p>
+            <p>When that happens, the combined brightness we observe drops. That dip in brightness is an eclipse. The characteristic pattern of dips over time is called a <strong>light curve</strong>.</p>
+
+            <div class="binary-types">
+              <div class="bt-row">
+                <div class="bt-swatch bt-s0" aria-hidden="true"></div>
+                <div>
+                  <strong>Detached (label 0)</strong> — the stars are well separated. The light curve shows sharp, distinct dips with a flat section between them.
+                </div>
+              </div>
+              <div class="bt-row">
+                <div class="bt-swatch bt-s1" aria-hidden="true"></div>
+                <div>
+                  <strong>Contact-like (label 1)</strong> — the stars are very close or physically touching. The brightness varies continuously with no flat section.
+                </div>
+              </div>
+            </div>
+
+            <div class="morph-note">
+              <div class="mn-label">How we defined labels for TESS</div>
+              <p>The TESS catalog gives each star a shape score from 0 to 1 based on its light curve. We used a threshold of 0.5: below 0.5 → label 0 (detached-like), at or above 0.5 → label 1 (contact-like).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 3 — TWO SURVEYS
+         ════════════════════════════════════════════════ -->
+    <section class="section s-surveys" id="surveys" aria-labelledby="surveys-h">
+      <div class="container">
+        <div class="ch-label">Chapter 3</div>
+        <h2 class="ch-heading" id="surveys-h">Two telescopes. Two data environments.</h2>
+        <p class="ch-intro reveal">Both NASA TESS and ESA Gaia are space missions that observe stars. But they work differently, cover different parts of the sky, and produce data in different formats.</p>
+
+        <div class="survey-split reveal">
+          <div class="ss-panel ss-tess">
+            <div class="ss-badge ss-badge-tess">NASA · TESS</div>
+            <div class="ss-numbers">
+              <div class="ss-num-row">
+                <span class="ss-big-num" data-count="4563" id="js-tess-n">4,563</span>
+                <span class="ss-num-desc">cleaned records</span>
+              </div>
+              <div class="ss-num-row">
+                <span class="ss-big-num">3,236</span>
+                <span class="ss-num-desc">training records</span>
+              </div>
+              <div class="ss-num-row">
+                <span class="ss-big-num">810</span>
+                <span class="ss-num-desc">test records</span>
+              </div>
+            </div>
+            <ul class="ss-facts">
+              <li>A pre-built catalog of measured orbital properties</li>
+              <li>Period and eclipse widths already calculated</li>
+              <li>Light-curve shape score used to create our labels</li>
+              <li>Used to train our model</li>
+            </ul>
+          </div>
+
+          <div class="ss-separator" aria-hidden="true">
+            <div class="ss-sep-line"></div>
+            <div class="ss-sep-text">vs</div>
+            <div class="ss-sep-line"></div>
+          </div>
+
+          <div class="ss-panel ss-gaia">
+            <div class="ss-badge ss-badge-gaia">ESA · Gaia DR3</div>
+            <div class="ss-numbers">
+              <div class="ss-num-row">
+                <span class="ss-big-num" data-count="500" id="js-gaia-n">500</span>
+                <span class="ss-num-desc">catalog sources</span>
+              </div>
+              <div class="ss-num-row">
+                <span class="ss-big-num">489</span>
+                <span class="ss-num-desc">usable records</span>
+              </div>
+              <div class="ss-num-row">
+                <span class="ss-big-num ss-num-warn">0</span>
+                <span class="ss-num-desc">sources overlapping with TESS</span>
+              </div>
+            </div>
+            <ul class="ss-facts">
+              <li>A different telescope, strategy, and instrument</li>
+              <li>Gaia assigns a mathematical model type, not a direct classification</li>
+              <li>Labels are <strong>proxy labels</strong> — not physical ground truth</li>
+              <li>Never used for training — only to test the trained model</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Proxy label explainer -->
+        <div class="proxy-note reveal">
+          <div class="pn-icon" aria-hidden="true">⚠</div>
+          <div>
+            <strong>Important:</strong> Gaia does not classify stars as detached or contact. It assigns a mathematical model type (like TWOGAUSSIANS or ELLIPSOIDAL). We converted these into proxy labels. When we checked a subset of these labels against an independent catalog (VSX), agreement was only <strong>39.2%</strong>. So our Gaia results show <em>agreement with proxy labels</em> — not physical ground truth.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 4 — FEATURES + CH 5 — THE MODEL
+         ════════════════════════════════════════════════ -->
+    <section class="section s-experiment" id="experiment" aria-labelledby="exp-h">
+      <div class="container">
+        <div class="ch-label">Chapters 4 &amp; 5</div>
+        <h2 class="ch-heading" id="exp-h">What the model sees — and how it decides.</h2>
+
+        <!-- Feature extraction visual -->
+        <div class="feature-flow reveal" aria-label="Feature extraction: from star light curve to model inputs">
+          <div class="ff-step ff-raw">
+            <div class="ff-icon">☆</div>
+            <div class="ff-title">Star system</div>
+            <div class="ff-desc">Light curve observed over time</div>
+          </div>
+          <div class="ff-arrow" aria-hidden="true">→</div>
+          <div class="ff-step ff-features">
+            <div class="ff-icon">◎</div>
+            <div class="ff-title">Two features</div>
+            <div class="ff-feats">
+              <span class="ff-feat">Orbital period (days)</span>
+              <span class="ff-feat">Eclipse duration (phase fraction)</span>
+            </div>
+          </div>
+          <div class="ff-arrow" aria-hidden="true">→</div>
+          <div class="ff-step ff-model">
+            <div class="ff-icon">⊕</div>
+            <div class="ff-title">Random Forest</div>
+            <div class="ff-desc">combines many decision trees</div>
+          </div>
+          <div class="ff-arrow" aria-hidden="true">→</div>
+          <div class="ff-step ff-output">
+            <div class="ff-icon">◈</div>
+            <div class="ff-title">Prediction</div>
+            <div class="ff-sub">Label 0 or 1</div>
+            <div class="ff-sub">+ probability estimate</div>
+          </div>
+        </div>
+
+        <!-- Why only two features -->
+        <div class="two-col reveal" style="margin-top:3rem">
+          <div>
+            <h3 class="sub-heading">Why only two features?</h3>
+            <p>Both surveys contain many measurements, but only two could be compared fairly between them.</p>
+            <ul class="feat-list">
+              <li><span class="feat-check feat-ok">✓</span> <strong>Orbital period</strong> — how long one full orbit takes</li>
+              <li><span class="feat-check feat-ok">✓</span> <strong>Eclipse duration</strong> — how long each eclipse lasts</li>
+            </ul>
+            <p class="feat-principle">"We chose fewer comparable measurements instead of mixing measurements that were not directly comparable."</p>
+          </div>
+          <div>
+            <h3 class="sub-heading">How the model was trained</h3>
+            <p>Random Forest combines many decision trees to make a prediction. We trained it on 80% of the TESS data and checked it on the remaining 20%.</p>
+            <p>Gaia was kept completely separate — never used for training.</p>
+            <div class="model-note">
+              <strong>Note:</strong> Random Forest confidence is not automatically reliable when the new data is very different from the training data.
+            </div>
+          </div>
+        </div>
+
+        <!-- Train/test split visual -->
+        <div class="split-visual reveal" aria-label="Train/test split: 80% TESS training, 20% TESS test, Gaia separate">
+          <div class="sv-block sv-train">
+            <div class="sv-pct">80%</div>
+            <div class="sv-label">TESS — TRAINING</div>
+            <div class="sv-n">3,236 records</div>
+          </div>
+          <div class="sv-block sv-test">
+            <div class="sv-pct">20%</div>
+            <div class="sv-label">TESS — TEST</div>
+            <div class="sv-n">810 records</div>
+          </div>
+          <div class="sv-sep" aria-hidden="true">+</div>
+          <div class="sv-block sv-gaia">
+            <div class="sv-pct sv-pct-gaia">SEPARATE</div>
+            <div class="sv-label">GAIA</div>
+            <div class="sv-n">489 records · never used for training</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 6 — IT WORKED ON TESS
+         ════════════════════════════════════════════════ -->
+    <section class="section s-result" id="result" aria-labelledby="tess-result-h">
+      <div class="container">
+        <div class="ch-label">Chapter 6</div>
+        <h2 class="ch-heading" id="tess-result-h">On TESS data, it worked well.</h2>
+        <p class="ch-intro reveal">First, we tested the model on 810 TESS records it had not seen during training.</p>
+
+        <!-- Big number reveal -->
+        <div class="big-stat-row reveal">
+          <div class="big-stat bs-primary">
+            <div class="bs-number bs-good" id="js-tess-acc">92.5%</div>
+            <div class="bs-label">accuracy on TESS test set</div>
+          </div>
+          <div class="big-stat">
+            <div class="bs-number" id="js-tess-conf">94.1%</div>
+            <div class="bs-label">mean confidence</div>
+          </div>
+        </div>
+
+        <!-- Calibration narrative -->
+        <div class="calib-narrative reveal">
+          <p>The model was not only accurate — it was well calibrated. When it said it was 90%+ confident:</p>
+          <div class="hc-callout hc-good">
+            <div class="hc-fraction">
+              <span class="hc-big">96.6%</span>
+              <span class="hc-sub">correct</span>
+            </div>
+            <div class="hc-detail">
+              653 of 810 predictions fell in the ≥90% confidence range.<br>
+              631 of those 653 were correct.
+            </div>
+          </div>
+          <div class="calib-metrics">
+            <div class="cm-item">
+              <div class="cm-val cm-good">+0.016</div>
+              <div class="cm-label">Calibration gap</div>
+              <div class="cm-desc">Mean confidence minus mean accuracy. Small means confidence ≈ correctness.</div>
+            </div>
+            <div class="cm-item">
+              <div class="cm-val cm-good">0.060</div>
+              <div class="cm-label">Brier score</div>
+              <div class="cm-desc">How close predicted probabilities were to actual outcomes. Lower is better. 0 = perfect.</div>
+            </div>
+          </div>
+        </div>
+        <p class="section-aside reveal">So far, the model looked trustworthy. Then we changed the data.</p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         TRANSITION — TESS → GAIA
+         ════════════════════════════════════════════════ -->
+    <section class="section s-transition" aria-label="Transition from TESS to Gaia experiment">
+      <div class="transition-inner">
+        <div class="tr-step tr-step-tess reveal-tr">TESS</div>
+        <div class="tr-arrow reveal-tr" aria-hidden="true">↓</div>
+        <div class="tr-center reveal-tr">
+          <div class="tr-model-label">Same trained model</div>
+          <div class="tr-model-sub">No retraining. No adjustments.</div>
+        </div>
+        <div class="tr-arrow reveal-tr" aria-hidden="true">↓</div>
+        <div class="tr-step tr-step-gaia reveal-tr">Gaia</div>
+        <p class="tr-note reveal-tr">
+          The research question asks whether confidence is reliable when a model crosses survey boundaries.<br>
+          Retraining on Gaia would answer a different question.
+        </p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 7 — GAIA RESULT
+         ════════════════════════════════════════════════ -->
+    <section class="section s-gaia-result" aria-labelledby="gaia-result-h">
+      <div class="container">
+        <div class="ch-label">Chapter 7</div>
+        <h2 class="ch-heading" id="gaia-result-h">On Gaia data, things changed.</h2>
+        <p class="ch-intro reveal">We applied the same trained model to 489 Gaia sources it had never seen. Results are measured against Gaia proxy labels — not physical ground truth.</p>
+
+        <!-- Side by side comparison -->
+        <div class="compare-panels reveal">
+          <div class="cmp-panel cmp-tess">
+            <div class="cmp-survey">TESS</div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-good">92.5%</div>
+              <div class="cmp-desc">accuracy</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val">94.1%</div>
+              <div class="cmp-desc">mean confidence</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-good">96.6%</div>
+              <div class="cmp-desc">when ≥90% confident: correct</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-good">+0.016</div>
+              <div class="cmp-desc">calibration gap</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-good">0.060</div>
+              <div class="cmp-desc">Brier score</div>
+            </div>
+          </div>
+
+          <div class="cmp-versus" aria-hidden="true">→</div>
+
+          <div class="cmp-panel cmp-gaia">
+            <div class="cmp-survey">GAIA</div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-poor">32.5%</div>
+              <div class="cmp-desc">proxy-label agreement</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val">86.0%</div>
+              <div class="cmp-desc">mean confidence</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-poor">48.5%</div>
+              <div class="cmp-desc">when ≥90% confident: proxy agreement</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-poor">+0.535</div>
+              <div class="cmp-desc">calibration gap</div>
+            </div>
+            <div class="cmp-metric">
+              <div class="cmp-val cmp-poor">0.488</div>
+              <div class="cmp-desc">Brier score</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gaia-story reveal">
+          <p>On TESS, high confidence usually matched correct predictions.</p>
+          <p>On Gaia, the model stayed confident — but confidence was no longer a reliable guide.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 8+9 — CONFIDENCE + RELIABILITY DIAGRAM
+         ════════════════════════════════════════════════ -->
+    <section class="section s-confidence" aria-labelledby="conf-h">
+      <div class="container">
+        <div class="ch-label">Chapters 8 &amp; 9</div>
+        <h2 class="ch-heading" id="conf-h">Was confidence calibrated?</h2>
+
+        <div class="two-col reveal" style="gap:2rem">
+          <div>
+            <p>A model is well calibrated when its confidence matches how often it is actually correct.</p>
+            <p>If it says 70% confident, it should be right about 70% of the time. If it says 90%, about 90% of the time.</p>
+            <p>The <strong>reliability diagram</strong> shows this. Confidence level runs across the bottom. How often it was actually right runs up the side. A perfectly calibrated model follows the diagonal line.</p>
+          </div>
+          <div class="calib-concept">
+            <div class="cc-row cc-ideal">
+              <span class="cc-conf">90% confident</span>
+              <span class="cc-eq">→</span>
+              <span class="cc-acc cc-acc-good">~90% correct</span>
+              <span class="cc-verdict cc-v-good">✓ calibrated</span>
+            </div>
+            <div class="cc-row cc-actual">
+              <span class="cc-conf">90% confident</span>
+              <span class="cc-eq">→</span>
+              <span class="cc-acc cc-acc-poor">~49% agreement</span>
+              <span class="cc-verdict cc-v-poor">✗ not calibrated</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full-width reliability diagram -->
+      <div class="rel-full">
+        <img
+          src="/assets/reliability_diagram.png"
+          alt="Reliability diagram. TESS curve (blue) stays close to the diagonal at every confidence level. Gaia curve (red) falls far below. In the 0.70–0.80 confidence bin, Gaia proxy-label agreement was only 9.2%."
+          class="rel-img"
+          loading="lazy"
+        />
+        <div class="rel-annotations container">
+          <div class="ra-item ra-tess">
+            <span class="ra-dot ra-dot-tess" aria-hidden="true"></span>
+            <span><strong>TESS:</strong> Stays close to the diagonal. At ≥90% confidence: 96.6% correct.</span>
+          </div>
+          <div class="ra-item ra-gaia">
+            <span class="ra-dot ra-dot-gaia" aria-hidden="true"></span>
+            <span><strong>Gaia:</strong> Falls far below the diagonal. In the 0.70–0.80 bin: only 9.2% proxy-label agreement.</span>
+          </div>
+          <div class="ra-warn">The y-axis for Gaia reflects agreement with proxy labels — not physical correctness.</div>
+        </div>
+      </div>
+
+      <!-- Brier score -->
+      <div class="container">
+        <div class="brier-section reveal">
+          <h3 class="sub-heading">Brier score: how close were the probabilities?</h3>
+          <p>The Brier score measures how far the model's probabilities were from what actually happened. Lower is better. If you guessed randomly, you would score about 0.25. Higher than 0.25 means worse than random.</p>
+          <div class="brier-compare">
+            <div class="bc-item bc-tess">
+              <div class="bc-val">0.060</div>
+              <div class="bc-label">TESS</div>
+              <div class="bc-bar-track"><div class="bc-bar" style="width:6%"></div></div>
+              <div class="bc-verdict">Excellent</div>
+            </div>
+            <div class="bc-baseline">
+              <div class="bc-base-line" aria-hidden="true"></div>
+              <div class="bc-base-label">~0.25 random</div>
+            </div>
+            <div class="bc-item bc-gaia">
+              <div class="bc-val">0.488</div>
+              <div class="bc-label">Gaia</div>
+              <div class="bc-bar-track bc-bt-gaia"><div class="bc-bar bc-bar-gaia" style="width:48.8%"></div></div>
+              <div class="bc-verdict bc-v-poor">Worse than random</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 11 — INVESTIGATION: DISTRIBUTIONS
+         ════════════════════════════════════════════════ -->
+    <section class="section s-why" aria-labelledby="why-h">
+      <div class="container">
+        <div class="ch-label">Chapter 11</div>
+        <h2 class="ch-heading" id="why-h">Why did confidence become unreliable?</h2>
+        <p class="ch-intro reveal">We investigated. Here are the differences we found between the two data environments.</p>
+
+        <!-- Distribution charts -->
+        <div class="dist-section reveal">
+          <h3 class="sub-heading">Orbital periods look different</h3>
+          <p class="dist-note">Gaia contains many more short-period systems than the TESS training data. Each bar is scaled relative to that survey's own peak (normalized to peak).</p>
+          <div class="dist-chart-wrap">
+            <canvas id="js-period-chart" class="dist-canvas" role="img" aria-label="Bar chart comparing orbital period distributions, normalized to each survey's peak. TESS median is 2.07 days. Gaia median is 0.458 days — Gaia has far more short-period systems."></canvas>
+          </div>
+          <div class="dist-callout">
+            <span class="dc-tess">TESS median: 2.07 days · 30.3% below 1 day</span>
+            <span class="dc-gaia">Gaia median: 0.458 days · 66.9% below 1 day</span>
+          </div>
+        </div>
+
+        <div class="dist-section reveal" style="margin-top:3rem">
+          <h3 class="sub-heading">Eclipse durations also look different</h3>
+          <p class="dist-note">In Gaia, eclipses are typically much wider than what the model saw during training. Each bar is scaled relative to that survey's own peak (normalized to peak).</p>
+          <div class="dist-chart-wrap">
+            <canvas id="js-ecl-chart" class="dist-canvas" role="img" aria-label="Bar chart comparing eclipse duration distributions, normalized to each survey's peak. TESS median is 0.079 phase fraction. Gaia median is 0.284 — about 3.6 times wider."></canvas>
+          </div>
+          <div class="dist-callout">
+            <span class="dc-tess">TESS median: 0.079 phase fraction</span>
+            <span class="dc-gaia">Gaia median: 0.284 — 3.6× wider</span>
+          </div>
+        </div>
+
+        <div class="cause-summary reveal">
+          <p>These differences may affect how the model behaves on Gaia.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 12 — EXPERIMENTS
+         ════════════════════════════════════════════════ -->
+    <section class="section s-experiments" aria-labelledby="exp2-h">
+      <div class="container">
+        <div class="ch-label">Chapter 12</div>
+        <h2 class="ch-heading" id="exp2-h">We ran three experiments.</h2>
+        <p class="ch-intro reveal">We tried to isolate the cause. Each experiment changed one thing.</p>
+
+        <div class="exp-table reveal" role="table" aria-label="Experiment comparison table">
+          <div class="et-header" role="row">
+            <div role="columnheader">Experiment</div>
+            <div role="columnheader">Change</div>
+            <div role="columnheader">Gaia calibration gap</div>
+            <div role="columnheader">Gaia Brier score</div>
+          </div>
+          <div class="et-row" role="row">
+            <div role="cell"><strong>Baseline</strong></div>
+            <div role="cell">Period + eclipse duration</div>
+            <div role="cell" class="et-val et-poor">+0.535</div>
+            <div role="cell" class="et-val et-poor">0.488</div>
+          </div>
+          <div class="et-row" role="row">
+            <div role="cell"><strong>Period only</strong></div>
+            <div role="cell">Removed eclipse duration entirely</div>
+            <div role="cell" class="et-val et-poor">+0.530</div>
+            <div role="cell" class="et-val et-poor">0.546</div>
+          </div>
+          <div class="et-row" role="row">
+            <div role="cell"><strong>Period filter</strong></div>
+            <div role="cell">Restricted Gaia to period ≥ 1 day (162 sources)</div>
+            <div role="cell" class="et-val et-poor">+0.489</div>
+            <div role="cell" class="et-val et-poor">0.501</div>
+          </div>
+        </div>
+
+        <div class="exp-interpretation reveal">
+          <p>Removing eclipse duration did not fix the problem. In fact, mean Gaia confidence increased (the model became even more overconfident — meaning its confidence rose while its agreement with the labels did not). The calibration gap barely changed.</p>
+          <p>Restricting Gaia to longer-period systems helped slightly — but the confidence problem remained substantial.</p>
+          <p class="exp-conclusion">"The confidence problem remained substantial after these controlled changes. No tested variation resolved it."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 14 — LIMITATIONS
+         ════════════════════════════════════════════════ -->
+    <section class="section s-limitations" aria-labelledby="lim-h">
+      <div class="container">
+        <div class="ch-label">Chapter 14</div>
+        <h2 class="ch-heading" id="lim-h">What this project does not prove.</h2>
+        <p class="ch-intro reveal">Honesty matters in research. Here is what we cannot claim.</p>
+        <div class="lim-grid reveal">
+          <div class="lim-item">
+            <div class="lim-no" aria-label="Not proven">✗</div>
+            <div>Random Forest is inherently unreliable.</div>
+          </div>
+          <div class="lim-item">
+            <div class="lim-no" aria-label="Not proven">✗</div>
+            <div>Cross-survey transfer is generally impossible.</div>
+          </div>
+          <div class="lim-item">
+            <div class="lim-no" aria-label="Not proven">✗</div>
+            <div>Eclipse duration is the sole cause of the confidence shift.</div>
+          </div>
+          <div class="lim-item">
+            <div class="lim-no" aria-label="Not proven">✗</div>
+            <div>Gaia data is incorrect — Gaia proxy-label errors and model errors cannot be separated.</div>
+          </div>
+          <div class="lim-item">
+            <div class="lim-no" aria-label="Not proven">✗</div>
+            <div>This finding applies to all surveys or all classification tasks.</div>
+          </div>
+          <div class="lim-item">
+            <div class="lim-no" aria-label="Not proven">✗</div>
+            <div>No single causal explanation was established.</div>
+          </div>
+        </div>
+        <div class="lim-summary reveal">
+          <p>The Gaia labels came from a mathematical fitting algorithm, not from physical observations. An independent check showed only 39.2% agreement. Some apparent errors may reflect label disagreements rather than model failures.</p>
+          <p>Only two features were used. Only one model type was tested. The Gaia sample (489 sources) is enough for a first study, but some confidence ranges had very few predictions, making those results less reliable.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         CH 15 — FINDING
+         ════════════════════════════════════════════════ -->
+    <section class="section s-finding" id="finding" aria-labelledby="finding-h">
+      <div class="finding-inner">
+        <div class="ch-label" style="color:var(--tess)">The Finding</div>
+        <h2 class="finding-heading" id="finding-h">Confidence should be evaluated,<br>not assumed.</h2>
+
+        <div class="finding-evidence reveal">
+          <div class="fe-pair">
+            <div class="fe-stat fe-tess">
+              <div class="fe-val fe-good">96.6%</div>
+              <div class="fe-label">TESS · ≥90% confidence → correct</div>
+            </div>
+            <div class="fe-vs" aria-hidden="true">vs</div>
+            <div class="fe-stat fe-gaia">
+              <div class="fe-val fe-poor">48.5%</div>
+              <div class="fe-label">Gaia · ≥90% confidence → proxy agreement</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="finding-text reveal">
+          <p>The model looked reliable on TESS.</p>
+          <p>On Gaia, its confidence became much less reliable.</p>
+          <p>The experiments did not identify one single cause.</p>
+        </div>
+
+        <div class="finding-rq reveal">
+          <p>The model worked well on TESS data.</p>
+          <p>When we moved it to Gaia, high confidence no longer matched correctness as closely.</p>
+          <p>This shows why model confidence should be checked when data changes.</p>
+        </div>
+
+        <footer class="site-footer">
+          <div class="sf-project">CYGNUS</div>
+          <div class="sf-title">Evaluating the Reliability of Machine Learning Confidence<br>for Variable-Star Classification Across Astronomical Surveys</div>
+          <div class="sf-author">rachana.s@atriauniversity.edu.in · 2026</div>
+        </footer>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+experiment,features,survey,n,accuracy,f1_weighted,mean_confidence,conf_ge_0.90_n,conf_ge_0.90_accuracy,calibration_gap,brier_score
+Phase 4 (period + ecl_dur),"period, ecl_dur",TESS test,810,0.9247,0.9247,0.9408,653,0.9663,0.0161,0.06
+Phase 4 (period + ecl_dur),"period, ecl_dur",Gaia (proxy),489,0.3252,0.2644,0.8603,236,0.4873,0.5351,0.4877
+Exp 1 (period only),period,TESS test,810,0.7617,0.7617,0.8599,447,0.8635,0.0982,0.1743
+Exp 1 (period only),period,Gaia (proxy),489,0.3824,0.3669,0.9127,351,0.3618,0.5303,0.5458
+"Exp 3 (period >= 1d, 2-feat)","period, ecl_dur",Gaia filtered (proxy),162,0.3827,0.4021,0.8718,88,0.3636,0.4891,0.5008

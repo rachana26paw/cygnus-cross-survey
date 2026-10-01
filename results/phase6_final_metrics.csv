@@ -1,0 +1,6 @@
+experiment,features,survey,n,accuracy,f1_weighted,mean_confidence,conf_ge_090_n,conf_ge_090_accuracy,calibration_gap,brier_score,notes
+Phase 4 baseline,period + eclipse_duration,TESS test,810,0.9247,0.9247,0.9408,653,0.9663,0.0161,0.0600,Training survey; ground-truth TESS labels
+Phase 4 baseline,period + eclipse_duration,Gaia proxy,489,0.3252,0.2644,0.8603,236,0.4873,0.5351,0.4877,Different survey; proxy labels only — not physical ground truth
+Experiment 1 period-only,period,TESS test,810,0.7617,0.7617,0.8599,447,0.8635,0.0982,0.1743,Removes eclipse duration; tests whether ecl_dur is sole cause
+Experiment 1 period-only,period,Gaia proxy,489,0.3824,0.3669,0.9127,351,0.3618,0.5303,0.5458,Removing ecl_dur increased Gaia mean confidence; gap unchanged
+Experiment 3 period-range,period + eclipse_duration,Gaia proxy (period >= 1 day),162,0.3827,0.4021,0.8718,88,0.3636,0.4891,0.5008,Tests period mismatch; marginal improvement only

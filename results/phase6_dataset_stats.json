@@ -1,0 +1,27 @@
+{
+  "tess": {
+    "total_cleaned": 4563,
+    "complete_cases": 4046,
+    "train": 3236,
+    "test": 810,
+    "label_0": 1885,
+    "label_1": 2161,
+    "period_median_days": 2.07,
+    "eclipse_dur_median": 0.079,
+    "period_pct_below_1d": 30.3
+  },
+  "gaia": {
+    "catalog": 500,
+    "usable": 489,
+    "label_0": 363,
+    "label_1": 126,
+    "period_median_days": 0.458,
+    "eclipse_dur_median": 0.284,
+    "period_pct_below_1d": 66.9,
+    "vsx_agreement_pct": 39.2
+  },
+  "model": {
+    "feature_importance_ecl_dur": 66.9,
+    "feature_importance_period": 33.1
+  }
+}
