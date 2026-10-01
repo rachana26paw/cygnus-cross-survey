@@ -154,4 +154,4 @@ cygnus-cross-survey/
 
 ## Author
 
-rachana.s@atriauniversity.edu.in
+rachana00526@gmail.com
